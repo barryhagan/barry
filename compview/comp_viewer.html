@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Comp View</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 1em;
+      }
+      iframe {
+        width: 100%;
+        height: 70vh;
+        border: 1px solid #ccc;
+        margin-bottom: 1em;
+      }
+      button {
+        font-size: 1em;
+        padding: 0.5em 0.5em;
+        margin: 0 0.3em;
+      }
+      input.vin-input {
+        width: 210px;;
+        font-size:14pt;
+      }
+      input.page-input {
+        width: 20px;;
+        font-size:14pt;
+      }    
+  .wrapper {
+    margin-top: 10px;
+    display: grid;
+    grid-gap: 10px;
+    background-color: #fff;
+    color: #444;
+  }
+
+  .box {
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 150%;
+
+  }
+
+  .box .box {
+    background-color: #ccc;
+    color: #444;
+  }
+
+  .a {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .b {
+    grid-column: 2 ;
+    grid-row: 1;
+  }
+
+  .c {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .d{
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+      </style>
+  </head>
+  <body>
+    <button onclick="prevPDF()">Prev</button>
+    <input onkeydown="onCompChange()" id="vinLabel" class="vin-input"></input>
+    Page <input id="pageNumber" class="page-input" value="2"></input>
+    <button onclick="nextPDF()">Next</button>
+   
+    <div class="wrapper">
+      <div class="box a">
+                <img id="subjectPic" src="SUBJECT_00.jpg" width="500px" onclick="subjectImgSwap()"/>
+      </div>
+      <div class="box b">
+                <img id="compPic" src="subject.png" width="500px" onclick="compImgSwap()" />
+      </div>
+      <div class="box c">
+              <iframe id="subjectViewer" src="SUBJECT.pdf#toolbar=0&view=FitH&page=2" frameborder="0" style="flex:none"></iframe>
+      </div>
+      <div class="box d">
+          <iframe id="pdfViewer" src="" frameborder="0"></iframe>
+      </div>
+    </div>
+    <script>
+
+      const pdfFiles = [
+        "OAKHOLLOW",
+        "STONYHILL",
+        "HONEYSUCKLE",
+        "JUDD",
+        "SUNVALLEY",
+        "GLENWAY",
+        "CONNEMARA",
+        "HWYA",
+        "KNOLLWOOD",
+
+      ];
+
+      let currentIndex = 0;
+      let compImgIndex = 0;
+      let subjectImgIndex = 0;
+      const viewer = document.getElementById("pdfViewer");
+      const vinLabel = document.getElementById("vinLabel");
+      const compPic = document.getElementById("compPic");
+      const subjectPic = document.getElementById("subjectPic");
+
+      function onCompChange() {        
+      if(event.keyCode ==13)
+      {
+        const vin = vinLabel.value;
+        const index = pdfFiles.indexOf(vin);
+        if (index !== -1) {
+          currentIndex = index;
+          showPDF(currentIndex);
+        } else {
+          alert("COMP not found in the list.");
+        }
+      }
+      }
+
+      function subjectImgSwap() {
+        subjectImgIndex = (subjectImgIndex + 1) % 4;
+        subjectPic.src = "SUBJECT_0" + subjectImgIndex.toString()  + ".jpg";
+      }
+
+
+      function compImgSwap() {
+        compImgIndex = (compImgIndex + 1) % 4;
+        compPic.src = pdfFiles[currentIndex] + "_0" + compImgIndex.toString()  + ".jpg";
+      }
+
+
+      function showPDF(index) {
+        if (index >= 0 && index < pdfFiles.length) {
+          viewer.src = pdfFiles[index] + ".pdf#toolbar=0&view=FitH&page=" + document.getElementById("pageNumber").value;
+          compImgIndex = 0;
+          compPic.src = pdfFiles[index] + "_0" + compImgIndex.toString()+ ".jpg";
+          vinLabel.value = pdfFiles[index];
+        }
+      }
+
+      function nextPDF() {
+        currentIndex = (currentIndex + 1) % pdfFiles.length;
+        showPDF(currentIndex);
+      }
+
+      function prevPDF() {
+        currentIndex = (currentIndex - 1 + pdfFiles.length) % pdfFiles.length;
+        showPDF(currentIndex);
+      }
+
+      
+      // Load first PDF
+      showPDF(currentIndex);
+    </script>
+  </body>
+</html>
